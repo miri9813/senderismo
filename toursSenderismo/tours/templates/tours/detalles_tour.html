@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block titulo %}<title>Detalles del Tour - {{ tour.nombre }}</title>{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                {% if tour.imagen %}
+                    <img src="{{ tour.imagen.url }}" class="card-img-top img-thumbnail" alt="{{ tour.nombre }}">
+                {% else %}
+                    <img src="{% static 'path/to/default/image.jpg' %}" class="card-img-top img-thumbnail" alt="{{ tour.nombre }}">
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-9">
+                            <h2 class="card-title">{{ tour.nombre }}</h2>
+                            <p class="card-text">{{ tour.descripcion }}</p>
+                            <p class="card-text"><small class="text-muted">Duración: {{ tour.duracion }} horas</small></p>
+                            <p class="card-text"><small class="text-muted">Precio: ${{ tour.precio }}</small></p>
+                        </div>
+                        <div class="col-9">
+                            <style>
+                                /* Hacer que el mapa sea responsive */
+                                #map {
+                                    width: 100%;
+                                    height: 50vh; /* Altura del 50% de la ventana */
+                                    margin: 0 auto; /* Centra el mapa horizontalmente */
+                                }
+
+                                @media (max-width: 768px) {
+                                    #map {
+                                        height: 40vh; /* Ajustar la altura en pantallas pequeñas */
+                                    }
+                                }
+                            </style>
+
+                            <!-- Mapa -->
+                            <div id="map"></div>
+
+                            <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+                            <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+                            <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+                            <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    // Coordenadas del centro de México
+                                    var mexicoBounds = [
+                                        [14.538, -118.496], // Suroeste
+                                        [32.718, -86.708]   // Noreste
+                                    ];
+
+                                    // Crear el mapa centrado en las coordenadas del tour
+                                    var map = L.map('map').fitBounds(mexicoBounds, {
+                                        padding: [50, 50]
+                                    });
+
+                                    // Añadir el mapa base de OpenStreetMap
+                                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                        attribution: '© OpenStreetMap contributors'
+                                    }).addTo(map);
+
+                                    // Recuperar las coordenadas del tour
+                                    var COORDENADA1 = String('{{ tour.latitud }}');
+                                    var coord1 = COORDENADA1.split(":");
+                                    var COORDENADA2 = String('{{ tour.longitud }}');
+                                    var coord2 = COORDENADA2.split(":");
+
+                                    console.log([19.7108826, -101.1861553]);
+
+                                    // Inicializar el mapa
+                                     //var map = L.map('map').setView([parseFloat(coord1[0]), parseFloat(coord1[1])], 13);
+
+                                    //console.log(latitud, longitud);
+
+                                    // Verificar si las coordenadas son válidas y están dentro de México
+                                    if (coord2[0]
+                                    // &&
+                                        //latitud >= mexicoBounds[0][0] && latitud <= mexicoBounds[1][0] &&
+                                       // longitud >= mexicoBounds[0][1] && longitud <= mexicoBounds[1][1]
+                                        ) {
+
+                                        // Añadir marcador en las coordenadas del tour
+                                        L.marker([parseFloat(coord1[0]), parseFloat(coord1[1])]).addTo(map)
+                                            .openPopup();
+
+                                        // Crear control de enrutamiento con el origen y el destino
+                                        var origin = L.latLng([parseFloat(coord1[0]), parseFloat(coord1[1])]); // Ajusta o elimina si no tienes un origen
+
+                                        L.Routing.control({
+                                            waypoints: [
+                                                origin,
+                                                L.latLng([parseFloat(coord2[0]), parseFloat(coord2[1])])  // Destino
+                                            ],
+                                            router: L.Routing.osrmv1({
+                                                language: 'es',
+                                                profile: 'car'
+                                            }),
+                                            routeWhileDragging: false, // Deshabilitar el arrastre de la ruta
+                                            draggableWaypoints: false, // Deshabilitar el arrastre de los puntos de ruta
+                                            addWaypoints: false // Deshabilitar la adición de nuevos puntos de ruta
+                                        }).addTo(map);
+                                    } else {
+                                        console.error("Coordenadas no válidas o fuera de México: latitud =", coord2[0], ", longitud =", coord2[1]);
+                                    }
+                                });
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if user.is_authenticated %}
+                <a href="{% url 'apartar_tour' tour.id %}" class="btn btn-success">Apartar Tour</a>
+            {% else %}
+                <p class="mt-4">Por favor, <a href="{% url 'login' %}">inicia sesión</a> para apartar un tour.</p>
+            {% endif %}
+        </div>
+    </div>
+     <div class="mt-4">
+        <h3>Reseñas</h3>
+        <ul class="list-group">
+            {% for reseña in reseñas %}
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <strong>{{ reseña.usuario.username }}</strong>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="rating">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= reseña.rating %}
+                                        ★
+                                    {% else %}
+                                        ☆
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <p>{{ reseña.texto }}</p>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% if user.is_authenticated %}
+    <div class="mt-4">
+        <h3>Añadir Reseña</h3>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.texto.label_tag }} {{ form.texto }}
+            </div>
+            <div class="form-group">
+                {{ form.rating.label_tag }}
+                <div class="star-rating">
+                    {{ form.rating }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Enviar Reseña</button>
+        </form>
+    </div>
+    {% else %}
+    <p class="mt-4">Por favor, <a href="{% url 'login' %}">inicia sesión</a> para dejar una reseña.</p>
+    {% endif %}
+</div>
+{% endblock %}

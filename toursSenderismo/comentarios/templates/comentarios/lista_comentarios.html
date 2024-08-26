@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}<title>Comentarios</title>{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Comentarios</h2>
+    
+    <!-- Lista de comentarios existentes -->
+    <ul class="list-group mb-4">
+        {% for comentario in comentarios %}
+        <li class="list-group-item">
+            <h5>{{ comentario.nombre }}</h5>
+            <p>{{ comentario.contenido }}</p>
+            <small>{{ comentario.fecha }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Formulario para agregar un nuevo comentario -->
+    <h4>Deja un comentario</h4>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.nombre.label_tag }} 
+            {{ form.nombre }}
+        </div>
+        		        
+        </div>
+        <div class="form-group">
+            {{ form.contenido.label_tag }}
+            {{ form.contenido }}
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar comentario</button>
+    </form>
+</div>
+{% endblock %}
