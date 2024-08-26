@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block titulo %}<title>Lista De Tours</title>{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Tours</h2>
+    <form method="GET" action="{% url 'lista_tours' %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Buscar tours..." aria-label="Buscar tours" aria-describedby="buscar-button">
+            <button class="btn btn-primary" type="submit" id="buscar-button">Buscar</button>
+        </div>
+    </form>
+    
+    <div class="row">
+        {% for tour in tours %}
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                {% if tour.imagen %}
+                    <img src="{{ tour.imagen.url }}" class="card-img-top" alt="{{ tour.nombre }}">
+                {% else %}
+                    <img src="{% static 'path/to/default/image.jpg' %}" class="card-img-top" alt="{{ tour.nombre }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ tour.nombre }}</h5>
+                    <p class="card-text"><small class="text-muted">Duración: {{ tour.duracion }} horas</small></p>
+                    <p class="card-text"><small class="text-muted">Todos los días (programa rotativo)</small></p>
+                    <p class="card-text"><small class="text-muted">Precio: ${{ tour.precio }}</small></p>
+                    <a href="{% url 'detalles_tour' tour.id %}" class="btn btn-primary">Ver Tour</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'apartar_tour' tour.id %}" class="btn btn-success">Apartar Tour</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

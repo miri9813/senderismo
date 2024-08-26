@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block titulo %}<title>Proceso de Pago</title>{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4 shadow-sm">
+                {% if tour.imagen %}
+                    <img src="{{ tour.imagen.url }}" class="card-img-top" alt="{{ tour.nombre }}" style="max-width: 100%;">
+                {% else %}
+                    <img src="{% static 'path/to/default/image.jpg' %}" class="card-img-top" alt="{{ tour.nombre }}" style="max-width: 100%;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ tour.nombre }}</h5>
+                    <p class="card-text">{{ tour.descripcion }}</p>
+                    <p class="card-text"><small class="text-muted">Duración: {{ tour.duracion }} horas</small></p>
+                    <p class="card-text"><small class="text-muted">Precio: ${{ tour.precio }}</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2>Confirmación de Pago</h2>
+            <p>Por favor, completa el pago para confirmar tu reserva.</p>
+            <form method="post" action="{% url 'confirmacion_pago' tour.id %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="numero_tarjeta">Número de Tarjeta</label>
+                    <input type="text" class="form-control" id="numero_tarjeta" name="numero_tarjeta" required>
+                </div>
+                <div class="form-group">
+                    <label for="nombre_titular">Nombre del Titular</label>
+                    <input type="text" class="form-control" id="nombre_titular" name="nombre_titular" required>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_vencimiento">Fecha de Vencimiento</label>
+                    <input type="text" class="form-control" id="fecha_vencimiento" name="fecha_vencimiento" required>
+                </div>
+                <div class="form-group">
+                    <label for="cvv">CVV</label>
+                    <input type="text" class="form-control" id="cvv" name="cvv" required>
+                </div>
+                <button type="submit" class="btn btn-success">Confirmar y Pagar</button>
+                <a href="{% url 'lista_tours' %}" class="btn btn-danger">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

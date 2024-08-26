@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}<title>Confirmación de Pago</title>{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4 shadow-sm">
+                {% if tour.imagen %}
+                    <img src="{{ tour.imagen.url }}" class="card-img-top img-thumbnail" alt="{{ tour.nombre }}">
+                {% else %}
+                    <img src="{% static 'path/to/default/image.jpg' %}" class="card-img-top img-thumbnail" alt="{{ tour.nombre }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ tour.nombre }}</h5>
+                    <p class="card-text">{{ tour.descripcion }}</p>
+                    <p class="card-text"><small class="text-muted">Duración: {{ tour.duracion }} horas</small></p>
+                    <p class="card-text"><small class="text-muted">Precio: ${{ tour.precio }}</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2>Confirmación de Pago</h2>
+            <p>Tu pago ha sido procesado correctamente. Gracias por reservar el tour {{ tour.nombre }}.</p>
+            <a href="{% url 'lista_tours' %}" class="btn btn-primary">Volver a la Lista de Tours</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

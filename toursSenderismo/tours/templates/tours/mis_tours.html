@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Mis Tours</h2>
+<div class="row">
+    <div class="col-md-6">
+        <h3>Tours Realizados</h3>
+        <ul class="list-group">
+            {% for reserva in reservas_realizadas %}
+            <li class="list-group-item">
+                <strong>{{ reserva.tour.nombre }}</strong> - ${{ reserva.total_precio }}
+                <br>
+                Cantidad de Personas: {{ reserva.cantidad_personas }}
+                <br>
+                Fecha de Reserva: {{ reserva.fecha_reserva }}
+            </li>
+            {% empty %}
+            <li class="list-group-item">No tienes tours realizados.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h3>Tours Pendientes</h3>
+        <ul class="list-group">
+            {% for reserva in reservas_pendientes %}
+            <li class="list-group-item">
+                <strong>{{ reserva.tour.nombre }}</strong> - ${{ reserva.total_precio }}
+                <br>
+                Cantidad de Personas: {{ reserva.cantidad_personas }}
+                <br>
+                Fecha de Reserva: {{ reserva.fecha_reserva }}
+            </li>
+            {% empty %}
+            <li class="list-group-item">No tienes tours pendientes.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

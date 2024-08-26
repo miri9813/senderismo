@@ -1,0 +1,9 @@
+<h2>Reservas Pendientes</h2>
+{% for reserva in reservas_pendientes %}
+    <p>{{ reserva.tour.nombre }} - {{ reserva.cantidad_personas }} personas</p>
+{% endfor %}
+
+<h2>Reservas Realizadas</h2>
+{% for reserva in reservas_realizadas %}
+    <p>{{ reserva.tour.nombre }} - {{ reserva.cantidad_personas }} personas</p>
+{% endfor %}
